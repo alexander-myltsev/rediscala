@@ -43,7 +43,7 @@ object Dependencies {
 object RediscalaBuild extends Build {
   val baseSourceUrl = "https://github.com/etaty/rediscala/tree/"
 
-  val v = "1.3"
+  val v = "1.3.1-SNAPSHOT"
 
   lazy val standardSettings = Defaults.defaultSettings ++
     Seq(
@@ -53,14 +53,13 @@ object RediscalaBuild extends Build {
       scalaVersion := "2.10.2",
       resolvers ++= Resolvers.resolversList,
 
-      publishTo <<= version {
-        (version: String) =>
-          val localPublishRepo = "/Users/valerian/Projects/rediscala-mvn"
-          if (version.trim.endsWith("SNAPSHOT"))
-            Some(Resolver.file("snapshots", new File(localPublishRepo + "/snapshots")))
-          else Some(Resolver.file("releases", new File(localPublishRepo + "/releases")))
+      publishTo <<= version { (version: String) =>
+          Some("CollectiveMedia Nexus Snapshots" at "http://nexus.collective-media.net/content/repositories/thirdparty/")
       },
+      credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
       publishMavenStyle := true,
+      publishArtifact in Test := false,
+      pomIncludeRepository := { _ => false },
       git.gitRemoteRepo := "git@github.com:etaty/rediscala.git",
 
       scalacOptions in (Compile, doc) <++= baseDirectory in LocalProject("rediscala") map { bd =>
